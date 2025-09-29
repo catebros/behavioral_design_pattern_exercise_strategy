@@ -1,5 +1,5 @@
 from __future__ import annotations
-from domain.pricing import PricingStrategy, NoDiscount, PercentageDiscount, BulkItemDiscount, CompositeStrategy
+from domain.pricing import PricingStrategy, NoDiscount, PercentageDiscount, BulkItemDiscount, CompositeStrategy, MinimumOrderDiscountStrategy
 
 
 def choose_strategy(kind: str, **kwargs) -> PricingStrategy:
@@ -13,6 +13,11 @@ def choose_strategy(kind: str, **kwargs) -> PricingStrategy:
             sku=kwargs.get("sku", ""),
             threshold=int(kwargs.get("threshold", 0)),
             per_item_off=float(kwargs.get("per_item_off", 0.0)),
+        )
+    if kind == "minimum":
+        return MinimumOrderDiscountStrategy(
+            min_amount=float(kwargs.get("min_amount", 0.0)),
+            discount_percent=float(kwargs.get("discount_percent", 0.0)),
         )
     if kind == "composite":
         # Example: combine percent then bulk
