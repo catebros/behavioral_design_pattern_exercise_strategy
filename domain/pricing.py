@@ -58,6 +58,17 @@ class CompositeStrategy(PricingStrategy):
             total = strat.apply(total, items)
         return round(total, 2)
 
-
+class MinimumOrderDiscountStrategy(PricingStrategy):
+    """Apply discount only if order meets minimum requirements."""
+    def __init__(self, min_amount: float, discount_percent: float) -> None:
+        self.min_amount = min_amount
+        self.discount_percent = discount_percent
+    
+    def apply(self, subtotal: float, items: list[LineItem]) -> float:
+        if subtotal >= self.min_amount:
+            discount = subtotal * (self.discount_percent / 100.0)
+            return round(subtotal - discount, 2)
+        return round(subtotal, 2)
+    
 def compute_subtotal(items: list[LineItem]) -> float:
     return round(sum(it.unit_price * it.qty for it in items), 2)
